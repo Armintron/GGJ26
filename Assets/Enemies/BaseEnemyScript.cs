@@ -19,7 +19,13 @@ public class BaseEnemyScript : MonoBehaviour
             PlayerRef = GameObject.FindGameObjectWithTag("Player");
         }
 
-        SetEnemyState(EnemyState.Active);
+        playerController controller = PlayerRef?.GetComponent<playerController>();
+        controller?.EventMaskStateChanged.AddListener((GGJ.MaskState state) =>
+        {
+            SetEnemyState(state == GGJ.MaskState.On ? EnemyState.Active : EnemyState.NotActive);
+        });
+
+        SetEnemyState(EnemyState.NotActive);
     }
     
     void FixedUpdate()
