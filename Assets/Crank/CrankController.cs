@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CrankController : MonoBehaviour
 {
@@ -11,9 +12,14 @@ public class CrankController : MonoBehaviour
     public Vector2 SelectionPoint;
     [SerializeField]
     public bool UsingCrank = true;
+    [SerializeField]
+    public float crankPercentage;
+    [SerializeField]
+    public UnityEvent<GGJ.CrankState> EventCrankStateChanged;
 
+    public GGJ.CrankState CurrentCrankState = GGJ.CrankState.NotStarted;
     private Vector2 lastUpdateMousePos;
-    
+
     void Update()
     {
         if (!UsingCrank)
@@ -30,6 +36,8 @@ public class CrankController : MonoBehaviour
         {
             SelectionPoint = mouseInViewport;
             lastUpdateMousePos = mouseInViewport;
+            crankPercentage = 0;
+            UpdateCrankState(GGJ.CrankState.Cranking);
         }
         // Player is crankin it
         else if (Input.GetKey(KeyCode.Mouse0))
@@ -42,10 +50,33 @@ public class CrankController : MonoBehaviour
                 Vector3 MousePointInViewport = Camera.main.ViewportToWorldPoint(new Vector3(mouseInViewport.x, mouseInViewport.y, nearPlane));
                 Debug.DrawLine(SelectionPointInViewport, MousePointInViewport, Color.red);
             }
-            
+
             float deltaAngle = Vector2.SignedAngle(SelectionPoint - mouseInViewport, SelectionPoint - lastUpdateMousePos);
             transform.Rotate(transform.right, deltaAngle);
+            crankPercentage += deltaAngle / 360;
+            // Allow over-completion, but floor at 0
+            crankPercentage = Mathf.Clamp(crankPercentage, 0, 1);
+            if (crankPercentage == 1)
+            {
+                EventCrankStateChanged.Invoke(GGJ.CrankState.Finished);
+            }
+
             lastUpdateMousePos = mouseInViewport;
         }
+        else
+        {
+            UpdateCrankState(GGJ.CrankState.NotStarted);
+        }
+    }
+
+    private void UpdateCrankState(GGJ.CrankState state)
+    {
+        if (state == CurrentCrankState)
+        {
+            return;
+        }
+
+        CurrentCrankState = state;
+        EventCrankStateChanged.Invoke(state);
     }
 }
