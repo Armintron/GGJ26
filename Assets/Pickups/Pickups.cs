@@ -1,11 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Pickups : MonoBehaviour
 {
-    public enum PickupType { Oxygen }
-    
+    public enum PickupType
+    {
+        Oxygen,
+        Crank,
+    };
+
+    public Color InteractColor;
+    public Color NotInteractColor;
+    public Material MaterialRef;
     [Header("Pickup Settings")]
     public PickupType type;
     public float value = 20f;
@@ -14,12 +22,33 @@ public class Pickups : MonoBehaviour
     public bool CanInteract { get; private set; }
     private Transform playerCamera;
 
+    public bool bIsInteracting = false;
+
+    public UnityEvent<bool> EventInteractionChanged;
+
     void Start()
     {
         if (Camera.main != null)
         {
             playerCamera = Camera.main.transform;
         }
+
+        SetInteractState(false);
+    }
+
+    public void SetInteractState(bool _bIsInteracting)
+    {
+        // For first-time setup
+        // Consider a bForce bool
+        MaterialRef.color = bIsInteracting ? InteractColor : NotInteractColor;
+
+        if (bIsInteracting == _bIsInteracting)
+        {
+            return;
+        }
+
+        bIsInteracting = _bIsInteracting;
+        EventInteractionChanged.Invoke(bIsInteracting);
     }
 
     void Update()
@@ -45,15 +74,20 @@ public class Pickups : MonoBehaviour
 
         CanInteract = lookingAtThis;
 
-        if (CanInteract && Input.GetKeyDown(KeyCode.E))
+        if (CanInteract && Input.GetKey(KeyCode.E))
         {
             ActivatePickup();
+        }
+        else
+        {
+            SetInteractState(false);
         }
     }
 
     private void ActivatePickup()
     {
         Debug.Log($"Activated {type} pickup!");
+        SetInteractState(true);
         
         switch (type)
         {

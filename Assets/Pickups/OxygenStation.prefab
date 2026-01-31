@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 0baf4329b1d95844e99b66a39fa382b4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -118,6 +118,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4333a5963d9da405baf44d4f024f6c4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  InteractColor: {r: 0.032995224, g: 1, b: 0, a: 0}
+  NotInteractColor: {r: 0.5754717, g: 0.5754717, b: 0.5754717, a: 0}
+  MaterialRef: {fileID: 2100000, guid: 0baf4329b1d95844e99b66a39fa382b4, type: 2}
   type: 0
   value: 20
   interactDistance: 2
+  bIsInteracting: 0
+  EventInteractionChanged:
+    m_PersistentCalls:
+      m_Calls: []

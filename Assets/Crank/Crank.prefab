@@ -610,4 +610,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SelectionPoint: {x: 0, y: 0}
-  UsingCrank: 1
+  UsingCrank: 0
+  crankPercentage: 0
+  EventCrankStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  CurrentCrankState: 0

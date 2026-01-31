@@ -11,7 +11,7 @@ public class CrankController : MonoBehaviour
     [SerializeField]
     public Vector2 SelectionPoint;
     [SerializeField]
-    public bool UsingCrank = true;
+    public bool UsingCrank = false;
     [SerializeField]
     public float crankPercentage;
     [SerializeField]
@@ -66,6 +66,23 @@ public class CrankController : MonoBehaviour
         else
         {
             UpdateCrankState(GGJ.CrankState.NotStarted);
+        }
+    }
+
+    public void OnInteract(bool bIsInteracting)
+    {
+        UpdateCrankState(bIsInteracting ? GGJ.CrankState.Cranking : GGJ.CrankState.NotStarted);
+        UsingCrank = bIsInteracting;
+
+        if (bIsInteracting)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+        else
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
         }
     }
 

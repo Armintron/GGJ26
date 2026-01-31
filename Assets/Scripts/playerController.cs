@@ -18,6 +18,8 @@ public class playerController : MonoBehaviour
 
     [SerializeField]
     public UnityEvent<GGJ.MaskState> EventMaskStateChanged;
+
+    private bool bIsInteracting = false;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -35,6 +37,11 @@ public class playerController : MonoBehaviour
 
         CurrentMaskState = state;
         EventMaskStateChanged.Invoke(state);
+    }
+
+    public void OnInteractChanged(bool _bIsInteracting)
+    {
+        bIsInteracting = _bIsInteracting;
     }
 
     // Update is called once per frame
@@ -64,11 +71,16 @@ public class playerController : MonoBehaviour
                 handAnim.Play("Idle");
             }
         }
+        
         Vector3 vel = (transform.forward * Input.GetAxis("Vertical") + transform.right * Input.GetAxis("Horizontal")) * speedMultiplier;
-        vel.y = rb.velocity.y;
-        rb.velocity = vel;
-        transform.Rotate(0, Input.GetAxis("Mouse X"), 0);
-        cameraObject.transform.Rotate(-Input.GetAxis("Mouse Y"), 0, 0);
+
+        if (!bIsInteracting)
+        {
+            vel.y = rb.velocity.y;
+            rb.velocity = vel;
+            transform.Rotate(0, Input.GetAxis("Mouse X"), 0);
+            cameraObject.transform.Rotate(-Input.GetAxis("Mouse Y"), 0, 0);
+        }
 
         onGround = Physics.Raycast(transform.position, Vector3.down, 1.1f);
         if (onGround)
