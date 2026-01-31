@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 685618212070499946}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -127,6 +127,10 @@ MonoBehaviour:
   walkSpeed: 5
   runSpeed: 10
   onGround: 0
+  CurrentMaskState: 0
+  EventMaskStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!54 &685618212070499946
 Rigidbody:
   m_ObjectHideFlags: 0

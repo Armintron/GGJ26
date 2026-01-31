@@ -14,6 +14,11 @@ public class BaseEnemyScript : MonoBehaviour
 
     void Start()
     {
+        if (!PlayerRef)
+        {
+            PlayerRef = GameObject.FindGameObjectWithTag("Player");
+        }
+
         SetEnemyState(EnemyState.Active);
     }
     
