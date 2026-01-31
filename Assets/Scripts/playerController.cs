@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class playerController : MonoBehaviour
 {
@@ -12,12 +13,28 @@ public class playerController : MonoBehaviour
     public float runSpeed = 5;
 
     public bool onGround = false;
-    // Start is called before the first frame update
+
+    public GGJ.MaskState CurrentMaskState = GGJ.MaskState.Off;
+
+    [SerializeField]
+    public UnityEvent<GGJ.MaskState> EventMaskStateChanged;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        SetMaskState(GGJ.MaskState.Off);
+    }
+
+    public void SetMaskState(GGJ.MaskState state)
+    {
+        if (CurrentMaskState == state)
+        {
+            return;
+        }
+
+        CurrentMaskState = state;
+        EventMaskStateChanged.Invoke(state);
     }
 
     // Update is called once per frame
@@ -32,6 +49,7 @@ public class playerController : MonoBehaviour
             if (!handInfo.IsName("HoldMask") && !handInfo.IsName("EnterMask"))
             {
                 handAnim.Play("EnterMask");
+                SetMaskState(GGJ.MaskState.On);
             }
         }
         else
@@ -39,6 +57,7 @@ public class playerController : MonoBehaviour
             if (handInfo.IsName("HoldMask") || handInfo.IsName("EnterMask") || handInfo.IsName("RemoveMask"))
             {
                 handAnim.Play("RemoveMask");
+                SetMaskState(GGJ.MaskState.Off);
             }
             else
             {

@@ -12,4 +12,10 @@ namespace GGJ
         Active,
         NotActive
     }
+
+    public enum MaskState
+    {
+        Off,
+        On
+    }
 }
