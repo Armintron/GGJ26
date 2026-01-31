@@ -13,6 +13,8 @@ public class BaseEnemyScript : MonoBehaviour
     [SerializeField]
     public GameObject PlayerRef;
     public NavMeshAgent NavMeshAgentRef;
+    public float ReNavDist = 2f;
+    public GameObject NavDestinationPoint;
 
     void Start()
     {
@@ -31,6 +33,8 @@ public class BaseEnemyScript : MonoBehaviour
 
             SetEnemyState(MaskToEnemyState(controller.CurrentMaskState));
         }
+
+        NavDestinationPoint.transform.parent = null;
     }
 
     private EnemyState MaskToEnemyState(MaskState state)
@@ -44,11 +48,18 @@ public class BaseEnemyScript : MonoBehaviour
         {
             case EnemyState.NotActive:
                 NavMeshAgentRef.isStopped = true;
+                NavDestinationPoint.SetActive(false);
                 break;
             case EnemyState.Active:
                 NavMeshAgentRef.isStopped = false;
-                NavMeshAgentRef.destination = PlayerRef.transform.position;
-                transform.LookAt(PlayerRef.transform);
+                Vector3 destination = PlayerRef.transform.position;
+                if (Vector3.Distance(NavMeshAgentRef.destination, destination) > ReNavDist)
+                {
+                    NavMeshAgentRef.destination = destination;
+                }
+                NavDestinationPoint.SetActive(true);
+                NavDestinationPoint.transform.position = NavMeshAgentRef.destination;
+                transform.LookAt(NavMeshAgentRef.destination);
                 break;
         }
     }
