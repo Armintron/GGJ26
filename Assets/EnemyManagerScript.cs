@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using GGJ;
 using UnityEngine;
 
 public class EnemyManagerScript : MonoBehaviour
@@ -18,7 +19,7 @@ public class EnemyManagerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (PlayerControllerRef.CurrentMaskState == GGJ.MaskState.On)
+        if (PlayerControllerRef.CurrentMaskState == MaskState.On)
         {
             MaskTime += Time.deltaTime;
         }

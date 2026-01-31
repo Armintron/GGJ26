@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using GGJ;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -14,10 +15,10 @@ public class playerController : MonoBehaviour
 
     public bool onGround = false;
 
-    public GGJ.MaskState CurrentMaskState = GGJ.MaskState.Off;
+    public MaskState CurrentMaskState = MaskState.Off;
 
     [SerializeField]
-    public UnityEvent<GGJ.MaskState> EventMaskStateChanged;
+    public UnityEvent<MaskState> EventMaskStateChanged;
 
     private bool bIsInteracting = false;
     void Start()
@@ -25,11 +26,11 @@ public class playerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        SetMaskState(GGJ.MaskState.Off);
+        SetMaskState(MaskState.Off);
         DontDestroyOnLoad(this.gameObject);
     }
 
-    public void SetMaskState(GGJ.MaskState state)
+    public void SetMaskState(MaskState state)
     {
         if (CurrentMaskState == state)
         {
@@ -57,7 +58,7 @@ public class playerController : MonoBehaviour
             if (!handInfo.IsName("HoldMask") && !handInfo.IsName("EnterMask"))
             {
                 handAnim.Play("EnterMask");
-                SetMaskState(GGJ.MaskState.On);
+                SetMaskState(MaskState.On);
             }
         }
         else
@@ -65,7 +66,7 @@ public class playerController : MonoBehaviour
             if (handInfo.IsName("HoldMask") || handInfo.IsName("EnterMask") || handInfo.IsName("RemoveMask"))
             {
                 handAnim.Play("RemoveMask");
-                SetMaskState(GGJ.MaskState.Off);
+                SetMaskState(MaskState.Off);
             }
             else
             {

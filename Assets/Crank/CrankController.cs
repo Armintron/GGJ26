@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.SearchService;
+using GGJ;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -15,9 +16,9 @@ public class CrankController : MonoBehaviour
     [SerializeField]
     public float crankPercentage;
     [SerializeField]
-    public UnityEvent<GGJ.CrankState> EventCrankStateChanged;
+    public UnityEvent<CrankState> EventCrankStateChanged;
 
-    public GGJ.CrankState CurrentCrankState = GGJ.CrankState.NotStarted;
+    public CrankState CurrentCrankState = CrankState.NotStarted;
     private Vector2 lastUpdateMousePos;
 
     void Update()
@@ -37,7 +38,7 @@ public class CrankController : MonoBehaviour
             SelectionPoint = mouseInViewport;
             lastUpdateMousePos = mouseInViewport;
             crankPercentage = 0;
-            UpdateCrankState(GGJ.CrankState.Cranking);
+            UpdateCrankState(CrankState.Cranking);
         }
         // Player is crankin it
         else if (Input.GetKey(KeyCode.Mouse0))
@@ -58,20 +59,20 @@ public class CrankController : MonoBehaviour
             crankPercentage = Mathf.Clamp(crankPercentage, 0, 1);
             if (crankPercentage == 1)
             {
-                EventCrankStateChanged.Invoke(GGJ.CrankState.Finished);
+                EventCrankStateChanged.Invoke(CrankState.Finished);
             }
 
             lastUpdateMousePos = mouseInViewport;
         }
         else
         {
-            UpdateCrankState(GGJ.CrankState.NotStarted);
+            UpdateCrankState(CrankState.NotStarted);
         }
     }
 
     public void OnInteract(bool bIsInteracting)
     {
-        UpdateCrankState(bIsInteracting ? GGJ.CrankState.Cranking : GGJ.CrankState.NotStarted);
+        UpdateCrankState(bIsInteracting ? CrankState.Cranking : CrankState.NotStarted);
         UsingCrank = bIsInteracting;
 
         if (bIsInteracting)
@@ -86,7 +87,7 @@ public class CrankController : MonoBehaviour
         }
     }
 
-    private void UpdateCrankState(GGJ.CrankState state)
+    private void UpdateCrankState(CrankState state)
     {
         if (state == CurrentCrankState)
         {

@@ -22,12 +22,20 @@ public class BaseEnemyScript : MonoBehaviour
         }
 
         playerController controller = PlayerRef?.GetComponent<playerController>();
-        controller?.EventMaskStateChanged.AddListener((GGJ.MaskState state) =>
+        if (controller)
         {
-            SetEnemyState(state == GGJ.MaskState.On ? EnemyState.Active : EnemyState.NotActive);
-        });
+            controller.EventMaskStateChanged.AddListener((MaskState state) =>
+            {
+                SetEnemyState(MaskToEnemyState(state));
+            });
 
-        SetEnemyState(EnemyState.NotActive);
+            SetEnemyState(MaskToEnemyState(controller.CurrentMaskState));
+        }
+    }
+
+    private EnemyState MaskToEnemyState(MaskState state)
+    {
+        return state == MaskState.On ? EnemyState.Active : EnemyState.NotActive;
     }
     
     void Update()
@@ -45,7 +53,7 @@ public class BaseEnemyScript : MonoBehaviour
         }
     }
     
-    public void SetEnemyState(GGJ.EnemyState state)
+    public void SetEnemyState(EnemyState state)
     {
         CurrentEnemyState = state;
     }
