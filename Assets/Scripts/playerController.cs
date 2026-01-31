@@ -6,6 +6,7 @@ public class playerController : MonoBehaviour
 {
     public GameObject cameraObject;
     Rigidbody rb;
+    public Animator handAnim;
 
     public float walkSpeed = 5;
     public float runSpeed = 5;
@@ -23,8 +24,27 @@ public class playerController : MonoBehaviour
     void Update()
     {
         float speedMultiplier = 5;
+        AnimatorStateInfo handInfo = handAnim.GetCurrentAnimatorStateInfo(0);
+
         if (Input.GetMouseButton(1))
+        {
             speedMultiplier = 10;
+            if (!handInfo.IsName("HoldMask") && !handInfo.IsName("EnterMask"))
+            {
+                handAnim.Play("EnterMask");
+            }
+        }
+        else
+        {
+            if (handInfo.IsName("HoldMask") || handInfo.IsName("EnterMask") || handInfo.IsName("RemoveMask"))
+            {
+                handAnim.Play("RemoveMask");
+            }
+            else
+            {
+                handAnim.Play("Idle");
+            }
+        }
         Vector3 vel = (transform.forward * Input.GetAxis("Vertical") + transform.right * Input.GetAxis("Horizontal")) * speedMultiplier;
         vel.y = rb.velocity.y;
         rb.velocity = vel;

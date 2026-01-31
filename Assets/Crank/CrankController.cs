@@ -52,7 +52,7 @@ public class CrankController : MonoBehaviour
             }
 
             float deltaAngle = Vector2.SignedAngle(SelectionPoint - mouseInViewport, SelectionPoint - lastUpdateMousePos);
-            transform.Rotate(transform.right, deltaAngle);
+            transform.Rotate(transform.InverseTransformVector(transform.right), deltaAngle);
             crankPercentage += deltaAngle / 360;
             // Allow over-completion, but floor at 0
             crankPercentage = Mathf.Clamp(crankPercentage, 0, 1);
