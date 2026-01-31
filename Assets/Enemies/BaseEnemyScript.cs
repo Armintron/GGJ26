@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using GGJ;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class BaseEnemyScript : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class BaseEnemyScript : MonoBehaviour
     public EnemyState CurrentEnemyState;
     [SerializeField]
     public GameObject PlayerRef;
+    public NavMeshAgent NavMeshAgentRef;
 
     void Start()
     {
@@ -28,15 +30,16 @@ public class BaseEnemyScript : MonoBehaviour
         SetEnemyState(EnemyState.NotActive);
     }
     
-    void FixedUpdate()
+    void Update()
     {
         switch(CurrentEnemyState)
         {
             case EnemyState.NotActive:
+                NavMeshAgentRef.isStopped = true;
                 break;
             case EnemyState.Active:
-                Vector3 dirToPlayer = (PlayerRef.transform.position - transform.position).normalized;
-                transform.position += new Vector3(dirToPlayer.x, 0, dirToPlayer.z) * Time.fixedDeltaTime * MoveSpeed;
+                NavMeshAgentRef.isStopped = false;
+                NavMeshAgentRef.destination = PlayerRef.transform.position;
                 transform.LookAt(PlayerRef.transform);
                 break;
         }
