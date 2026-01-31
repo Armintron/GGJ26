@@ -26,6 +26,7 @@ public class playerController : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         SetMaskState(GGJ.MaskState.Off);
+        DontDestroyOnLoad(this.gameObject);
     }
 
     public void SetMaskState(GGJ.MaskState state)
