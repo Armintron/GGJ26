@@ -6,4 +6,10 @@ namespace GGJ
         Cranking,
         Finished,
     }
+
+    public enum EnemyState
+    {
+        Active,
+        NotActive
+    }
 }
