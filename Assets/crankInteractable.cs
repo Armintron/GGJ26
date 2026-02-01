@@ -33,6 +33,17 @@ public class crankInteractable : MonoBehaviour
     public GameObject turnPrompt;
 
     Vector3 crankAngle;
+
+    [Header("Audio")]
+    public AudioClip crankSound;
+    public float crankSoundInterval = 0.2f;
+    public AudioClip doorSound;
+    public float doorSoundInterval = 0.5f;
+
+    private AudioSource audioSource;
+    private float nextSoundTime;
+    private float nextDoorSoundTime;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,6 +52,10 @@ public class crankInteractable : MonoBehaviour
         playerCrankAnimator = foundController.playerCrankAnimator;
         playerObject = foundController.playerObject;
         playerCrank = foundController.playerCrank;
+
+        // Initialize audio source
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
     }
 
     private void OnTriggerStay(Collider other)
@@ -98,13 +113,31 @@ public class crankInteractable : MonoBehaviour
 
         Vector2 mouseInput = Vector3.Normalize(new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")));
 
+        bool isMoving = false;
         if (Vector2.Distance(mouseInput, crankForwardOffsetDirection) < 0.8)
         {
             updateCrankAngle(2f);
+            isMoving = true;
         }
         if (Vector2.Distance(mouseInput, crankBackwardsOffsetDirection) < 0.8)
         {
             updateCrankAngle(-2f);
+            isMoving = true;
+        }
+
+        if (isMoving)
+        {
+            if (crankSound != null && Time.time >= nextSoundTime)
+            {
+                audioSource.PlayOneShot(crankSound);
+                nextSoundTime = Time.time + crankSoundInterval;
+            }
+
+            if (doorSound != null && Time.time >= nextDoorSoundTime)
+            {
+                audioSource.PlayOneShot(doorSound);
+                nextDoorSoundTime = Time.time + doorSoundInterval;
+            }
         }
 
         crankObject.transform.localEulerAngles = playerCrank.transform.localEulerAngles;
