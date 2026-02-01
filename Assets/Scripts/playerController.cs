@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using GGJ;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class playerController : MonoBehaviour
 {
+    public GameObject healthBar;
+    public GameObject oxygenBar;
+    float health = 100;
+    float oxygen = 100;
+
     public GameObject cameraObject;
     Rigidbody rb;
     public Animator handAnim;
@@ -49,11 +55,15 @@ public class playerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        healthBar.transform.localScale = new Vector3(health/100, 1, 1);
+        oxygenBar.transform.localScale = new Vector3(oxygen / 100, 1, 1);
+
         float speedMultiplier = 5;
         AnimatorStateInfo handInfo = handAnim.GetCurrentAnimatorStateInfo(0);
 
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButton(1) && oxygen > 0)
         {
+            oxygen -= Time.deltaTime * 6;
             speedMultiplier = 10;
             if (!handInfo.IsName("HoldMask") && !handInfo.IsName("EnterMask"))
             {
@@ -63,6 +73,7 @@ public class playerController : MonoBehaviour
         }
         else
         {
+            health -= Time.deltaTime * 3;
             if (handInfo.IsName("HoldMask") || handInfo.IsName("EnterMask") || handInfo.IsName("RemoveMask"))
             {
                 handAnim.Play("RemoveMask");
@@ -72,6 +83,10 @@ public class playerController : MonoBehaviour
             {
                 handAnim.Play("Idle");
             }
+        }
+        if (health < 0)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
         
         Vector3 vel = (transform.forward * Input.GetAxis("Vertical") + transform.right * Input.GetAxis("Horizontal")) * speedMultiplier;
