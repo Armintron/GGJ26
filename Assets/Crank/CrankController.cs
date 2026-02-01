@@ -21,6 +21,10 @@ public class CrankController : MonoBehaviour
     public CrankState CurrentCrankState = CrankState.NotStarted;
     private Vector2 lastUpdateMousePos;
 
+    public Animator playerCrankAnimator;
+    public GameObject playerObject;
+    public GameObject playerCrank;
+
     void Update()
     {
         if (!UsingCrank)
@@ -43,6 +47,9 @@ public class CrankController : MonoBehaviour
         // Player is crankin it
         else if (Input.GetKey(KeyCode.Mouse0))
         {
+            playerObject.transform.position += (transform.position - playerCrank.transform.position)*Time.deltaTime*3;
+            playerCrankAnimator.Play("Crank");
+            playerCrankAnimator.Update(transform.localEulerAngles.x/10);
             // Debug Line
             {
                 // Need some epsilon to actually see it
@@ -67,11 +74,13 @@ public class CrankController : MonoBehaviour
         else
         {
             UpdateCrankState(CrankState.NotStarted);
+            playerCrankAnimator.Play("Idle");
         }
     }
 
     public void OnInteract(bool bIsInteracting)
     {
+        print("OnInteract");
         UpdateCrankState(bIsInteracting ? CrankState.Cranking : CrankState.NotStarted);
         UsingCrank = bIsInteracting;
 
