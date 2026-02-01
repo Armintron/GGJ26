@@ -697,7 +697,7 @@ MonoBehaviour:
   cameraObject: {fileID: 2596479797084471209}
   handAnim: {fileID: 6618116224420845324}
   walkSpeed: 2
-  runSpeed: 8
+  runSpeed: 4
   onGround: 0
   spinningCrank: 0
   insideFog: 0
@@ -1662,7 +1662,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 496
+  m_VersionIndex: 499
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -1687,7 +1687,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0baf4329b1d95844e99b66a39fa382b4, type: 2}
+  - {fileID: 2100000, guid: 1e3e0afc0b9400442b3b6207d9ef7afb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2790,7 +2790,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 8db40da17bf72a44b9f54b57a593fad2, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: fab9a1796c24b324d963227605478395, type: 2}
+      objectReference: {fileID: 2100000, guid: 4a7ec47a441b0894fb5a2a960270b185, type: 2}
     - target: {fileID: 919132149155446097, guid: 8db40da17bf72a44b9f54b57a593fad2, type: 3}
       propertyPath: m_Name
       value: Mask
