@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace GGJ
 {
     public enum CrankState
@@ -18,4 +20,9 @@ namespace GGJ
         Off,
         On
     }
+
+    public enum Layers
+    {
+        Player,
+    };
 }
