@@ -14,7 +14,11 @@ public class BaseEnemyScript : MonoBehaviour
     public GameObject PlayerRef;
     public NavMeshAgent NavMeshAgentRef;
     public float ReNavDist = 2f;
-    public GameObject NavDestinationPoint;
+    public Transform AttackStart;
+    public float AttackRadius = 2f;
+    public float AttackDist = 5f;
+    public float AttackRate = 2f;
+    public float LastAttack = 0f;
 
     void Start()
     {
@@ -33,34 +37,58 @@ public class BaseEnemyScript : MonoBehaviour
 
             SetEnemyState(MaskToEnemyState(controller.CurrentMaskState));
         }
-
-        NavDestinationPoint.transform.parent = null;
     }
 
     private EnemyState MaskToEnemyState(MaskState state)
     {
         return state == MaskState.On ? EnemyState.Active : EnemyState.NotActive;
     }
-    
+
     void Update()
     {
-        switch(CurrentEnemyState)
+        switch (CurrentEnemyState)
         {
             case EnemyState.NotActive:
                 NavMeshAgentRef.isStopped = true;
-                NavDestinationPoint.SetActive(false);
                 break;
             case EnemyState.Active:
+                if ((LastAttack + AttackRate) <= Time.time)
+                {
+                    Attack();
+                    LastAttack = Time.time;
+                }
+
                 NavMeshAgentRef.isStopped = false;
                 Vector3 destination = PlayerRef.transform.position;
                 if (Vector3.Distance(NavMeshAgentRef.destination, destination) > ReNavDist)
                 {
                     NavMeshAgentRef.destination = destination;
                 }
-                NavDestinationPoint.SetActive(true);
-                NavDestinationPoint.transform.position = NavMeshAgentRef.destination;
                 transform.LookAt(NavMeshAgentRef.destination);
                 break;
+        }
+    }
+    
+    public void Attack()
+    {
+        RaycastHit hit;
+        {
+            // Top
+            Debug.DrawRay(AttackStart.position + new Vector3(0, AttackRadius / 2, 0), transform.forward * AttackDist, Color.red, 1f);
+            // Bottom
+            Debug.DrawRay(AttackStart.position - new Vector3(0, AttackRadius / 2, 0), transform.forward * AttackDist, Color.red, 1f);
+            // Right
+            Debug.DrawRay(AttackStart.position + new Vector3(AttackRadius / 2, 0, 0), transform.forward * AttackDist, Color.red, 1f);
+            // Left
+            Debug.DrawRay(AttackStart.position - new Vector3(AttackRadius / 2, 0, 0), transform.forward * AttackDist, Color.red, 1f);
+        }
+        if (Physics.SphereCast(AttackStart.position, AttackRadius, transform.forward, out hit, AttackDist))
+        {
+            if (hit.collider.gameObject.CompareTag("Player"))
+            {
+                Debug.Log("Doing Damage");
+                PlayerStats.Instance.currentHealth -= 10;
+            }
         }
     }
     
