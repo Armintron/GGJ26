@@ -1,110 +1,70 @@
+using System;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 
-[ExecuteInEditMode]
-[RequireComponent(typeof(Camera))]
-public class ToxicGasSimple : MonoBehaviour
+[Serializable]
+[PostProcess(typeof(ToxicGasRenderer), PostProcessEvent.BeforeStack, "Custom/ToxicGas")]
+public sealed class ToxicGas : PostProcessEffectSettings
 {
-    [Header("Control")]
-    [Tooltip("If TRUE: Gas goes away, Vignette appears.")]
-    public bool wearingMask = false;
-
-    [Tooltip("How fast the transition happens.")]
-    public float fadeSpeed = 3.0f;
-
-    [Header("Shader Reference")]
-    public Shader gasShader;
+    // Default 0 = Mask OFF (Gas Active). 
+    // We keep this 0 so the gas is visible by default when you enter the zone.
+    [Range(0f, 1f), Tooltip("0 = Gas (Mask Off), 1 = Clear (Mask On)")]
+    public FloatParameter maskProgress = new FloatParameter { value = 0f };
 
     [Header("Gas Settings")]
-    [Range(0f, 5f)] public float maxGasDensity = 1.5f;
-    [Range(0f, 20f)] public float depthFalloff = 8f;
-    public Color gasColor = new Color(0.2f, 0.6f, 0.1f, 1f);
+    // CHANGE: Default is now 0. This ensures that "Outside the zone" = No Gas.
+    [Range(0f, 5f)]
+    public FloatParameter maxGasDensity = new FloatParameter { value = 0f };
 
-    [Header("Mask Vignette Settings")]
-    [Range(0f, 1f)] public float maxVignetteStrength = 0.85f;
-    public Color vignetteColor = Color.black;
+    [Range(0f, 20f)]
+    public FloatParameter depthFalloff = new FloatParameter { value = 8f };
+
+    public ColorParameter gasColor = new ColorParameter { value = new Color(0.2f, 0.6f, 0.1f, 1f) };
 
     [Header("Animation")]
-    [Range(0f, 2f)] public float speed = 0.5f;
-    [Range(1f, 20f)] public float cloudScale = 5f;
-    [Range(0f, 0.1f)] public float distortionStrength = 0.02f;
+    public FloatParameter speed = new FloatParameter { value = 0.5f };
+    public FloatParameter cloudScale = new FloatParameter { value = 5f };
 
-    private Material _material;
-    private Camera _cam;
+    // CHANGE: Default is now 0 so distortion fades out at distance.
+    public FloatParameter maxDistortion = new FloatParameter { value = 0f };
 
-    // Internal animation values
-    private float _currentGasDensity;
-    private float _currentVignetteStrength;
+    [Header("Vignette Settings")]
+    // We keep this High by default so the Mask Vignette works even outside the gas zone
+    [Range(0f, 1f)]
+    public FloatParameter maxVignetteStrength = new FloatParameter { value = 0.85f };
+    public ColorParameter vignetteColor = new ColorParameter { value = Color.black };
 
-    private Material Material
+    [Header("Unlit Visibility")]
+    [Range(0f, 1.2f)]
+    public FloatParameter unlitThreshold = new FloatParameter { value = 0.8f };
+    [Range(0f, 1f)]
+    public FloatParameter unlitStrength = new FloatParameter { value = 1.0f };
+}
+
+public sealed class ToxicGasRenderer : PostProcessEffectRenderer<ToxicGas>
+{
+    public override void Render(PostProcessRenderContext context)
     {
-        get
-        {
-            if (_material == null)
-            {
-                if (gasShader == null) return null;
-                _material = new Material(gasShader);
-                _material.hideFlags = HideFlags.HideAndDontSave;
-            }
-            return _material;
-        }
-    }
+        var sheet = context.propertySheets.Get(Shader.Find("Hidden/ToxicGasPPS"));
 
-    void OnEnable()
-    {
-        _cam = GetComponent<Camera>();
-        _cam.depthTextureMode = _cam.depthTextureMode | DepthTextureMode.Depth;
+        // Calculate values based on Mask Progress
+        float currentGas = Mathf.Lerp(settings.maxGasDensity, 0f, settings.maskProgress);
+        float currentDistortion = Mathf.Lerp(settings.maxDistortion, 0f, settings.maskProgress);
+        float currentVignette = Mathf.Lerp(0f, settings.maxVignetteStrength, settings.maskProgress);
 
-        // Snap to initial state
-        _currentGasDensity = wearingMask ? 0f : maxGasDensity;
-        _currentVignetteStrength = wearingMask ? maxVignetteStrength : 0f;
-    }
+        sheet.properties.SetFloat("_Density", currentGas);
+        sheet.properties.SetFloat("_Distortion", currentDistortion);
+        sheet.properties.SetFloat("_VignetteStrength", currentVignette);
 
-    void OnDisable()
-    {
-        if (_material != null) DestroyImmediate(_material);
-    }
+        // Static Props
+        sheet.properties.SetColor("_GasColor", settings.gasColor);
+        sheet.properties.SetFloat("_DepthFalloff", settings.depthFalloff);
+        sheet.properties.SetFloat("_Speed", settings.speed);
+        sheet.properties.SetFloat("_Scale", settings.cloudScale);
+        sheet.properties.SetColor("_VignetteColor", settings.vignetteColor);
+        sheet.properties.SetFloat("_UnlitThreshold", settings.unlitThreshold);
+        sheet.properties.SetFloat("_UnlitStrength", settings.unlitStrength);
 
-    void Update()
-    {
-        // TARGET VALUES
-        // Mask ON = Gas 0, Vignette HIGH
-        // Mask OFF = Gas HIGH, Vignette 0
-        float targetGas = wearingMask ? 0f : maxGasDensity;
-        float targetVignette = wearingMask ? maxVignetteStrength : 0f;
-
-        if (Application.isPlaying)
-        {
-            float dt = Time.deltaTime * fadeSpeed;
-            _currentGasDensity = Mathf.Lerp(_currentGasDensity, targetGas, dt);
-            _currentVignetteStrength = Mathf.Lerp(_currentVignetteStrength, targetVignette, dt);
-        }
-        else
-        {
-            _currentGasDensity = targetGas;
-            _currentVignetteStrength = targetVignette;
-        }
-    }
-
-    void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        if (gasShader == null || Material == null)
-        {
-            Graphics.Blit(source, destination);
-            return;
-        }
-
-        // Pass animated values
-        Material.SetFloat("_Density", _currentGasDensity);
-        Material.SetFloat("_VignetteStrength", _currentVignetteStrength);
-
-        // Pass static/color values
-        Material.SetColor("_VignetteColor", vignetteColor);
-        Material.SetFloat("_DepthFalloff", depthFalloff);
-        Material.SetColor("_GasColor", gasColor);
-        Material.SetFloat("_Speed", speed);
-        Material.SetFloat("_Scale", cloudScale);
-        Material.SetFloat("_Distortion", distortionStrength);
-
-        Graphics.Blit(source, destination, Material);
+        context.command.BlitFullscreenTriangle(context.source, context.destination, sheet, 0);
     }
 }

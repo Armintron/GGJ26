@@ -96,13 +96,13 @@ public class crankInteractable : MonoBehaviour
 
         Vector2 mouseInput = Vector3.Normalize(new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")));
 
-        if (Vector2.Distance(mouseInput, crankForwardOffsetDirection) < 0.6)
+        if (Vector2.Distance(mouseInput, crankForwardOffsetDirection) < 0.8)
         {
-            updateCrankAngle(0.5f);
+            updateCrankAngle(2f);
         }
-        if (Vector2.Distance(mouseInput, crankBackwardsOffsetDirection) < 0.6)
+        if (Vector2.Distance(mouseInput, crankBackwardsOffsetDirection) < 0.8)
         {
-            updateCrankAngle(-0.5f);
+            updateCrankAngle(-2f);
         }
 
         crankObject.transform.localEulerAngles = playerCrank.transform.localEulerAngles;

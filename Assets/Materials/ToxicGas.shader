@@ -1,35 +1,34 @@
-Shader "Hidden/ToxicGasSimple"
+Shader "Hidden/ToxicGasPPS" 
 {
-    Properties
-    {
-        _MainTex ("Base (RGB)", 2D) = "white" {}
-    }
     SubShader
     {
         Cull Off ZWrite Off ZTest Always
 
         Pass
         {
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            #include "UnityCG.cginc"
+            HLSLPROGRAM
+            #pragma vertex VertDefault
+            #pragma fragment Frag
 
-            struct v2f
-            {
-                float2 uv : TEXCOORD0;
-                float4 vertex : SV_POSITION;
-            };
+            #include "Packages/com.unity.postprocessing/PostProcessing/Shaders/StdLib.hlsl"
 
-            v2f vert (appdata_img v)
-            {
-                v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = v.texcoord;
-                return o;
-            }
+            // --- FIXED: Use PPSv2 Texture Declarations ---
+            TEXTURE2D_SAMPLER2D(_MainTex, sampler_MainTex);
+            TEXTURE2D_SAMPLER2D(_CameraDepthTexture, sampler_CameraDepthTexture);
 
-            // --- NOISE MATH ---
+            float _Density;
+            float _DepthFalloff;
+            float4 _GasColor;
+            float _Speed;
+            float _Scale;
+            float _Distortion;
+            
+            float _VignetteStrength;
+            float4 _VignetteColor;
+            float _UnlitThreshold;
+            float _UnlitStrength;
+
+            // --- NOISE ---
             float hash(float2 p) {
                 return frac(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453);
             }
@@ -47,64 +46,47 @@ Shader "Hidden/ToxicGasSimple"
                 v += 0.125 * noise(p); 
                 return v;
             }
-            // ------------------
 
-            sampler2D _MainTex;
-            sampler2D _CameraDepthTexture;
-
-            float _Density;
-            float _DepthFalloff;
-            float4 _GasColor;
-            float _Speed;
-            float _Scale;
-            float _Distortion;
-            
-            // New Vignette Variables
-            float _VignetteStrength;
-            float4 _VignetteColor;
-
-            fixed4 frag (v2f i) : SV_Target
+            float4 Frag(VaryingsDefault i) : SV_Target
             {
-                // 1. Get Depth
-                float depthRaw = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
+                // FIXED: Use 3 arguments (Texture, Sampler, UV)
+                float depthRaw = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, i.texcoord);
                 float depth = Linear01Depth(depthRaw);
 
-                // 2. Generate Noise / Gas
+                // Noise
                 float2 scroll = float2(_Time.y * _Speed, _Time.y * _Speed * 0.4);
-                float2 noiseUV = (i.uv * _Scale) + scroll;
+                float2 noiseUV = (i.texcoord * _Scale) + scroll;
                 float gasValue = fbm(noiseUV + depth * 2.0);
 
-                // 3. Apply Distortion
+                // Distortion
                 float2 distortOffset = (gasValue - 0.5) * _Distortion;
-                distortOffset *= saturate(depth * 5.0); // Dampen near camera
+                distortOffset *= saturate(depth * 5.0); 
 
-                // 4. Sample Scene
-                fixed4 col = tex2D(_MainTex, i.uv + distortOffset);
+                // FIXED: Use SAMPLE_TEXTURE2D for main scene color
+                float4 col = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord + distortOffset);
 
-                // 5. Apply Gas Fog
+                // Unlit Protection
+                float luminance = dot(col.rgb, float3(0.2126, 0.7152, 0.0722));
+                float protectUnlit = smoothstep(_UnlitThreshold, 1.0, luminance);
+
+                // Gas Fog
                 float fogFactor = saturate(depth * _DepthFalloff * (gasValue + 0.5));
                 fogFactor = saturate(fogFactor * _Density);
-                
-                // Blend Scene with Gas
-                fixed4 result = lerp(col, _GasColor, fogFactor);
+                fogFactor = lerp(fogFactor, 0.0, protectUnlit * _UnlitStrength);
 
-                // 6. Apply Vignette (Mask Edges)
-                // Calculate distance from center of screen
-                float2 center = i.uv - 0.5;
+                float4 result = lerp(col, _GasColor, fogFactor);
+
+                // Vignette
+                float2 center = i.texcoord - 0.5;
                 float dist = length(center);
-                
-                // Smoothstep creates a soft circle. 0.3 is inner edge, 0.8 is outer corner.
                 float vignetteMask = smoothstep(0.3, 0.8, dist);
-                
-                // Apply vignette strength
                 vignetteMask *= _VignetteStrength;
 
-                // Blend result with Vignette Color (usually black)
                 result = lerp(result, _VignetteColor, vignetteMask);
 
                 return result;
             }
-            ENDCG
+            ENDHLSL
         }
     }
 }

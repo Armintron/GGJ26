@@ -194,7 +194,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b315cc3d5d05c3142969415ce1451ef1, type: 2}
+  - {fileID: 2100000, guid: cfc1b1c994ca47149bc7eec3009d21ac, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -424,9 +424,7 @@ GameObject:
   - component: {fileID: 7741103317775123907}
   - component: {fileID: 6590973405936257282}
   - component: {fileID: 7848303170679533029}
-  - component: {fileID: 2076027811668825883}
-  - component: {fileID: 2517280182534493461}
-  - component: {fileID: 5256841565269403975}
+  - component: {fileID: 6497139409712952038}
   m_Layer: 0
   m_Name: RealCameraSorry
   m_TagString: MainCamera
@@ -458,8 +456,8 @@ Camera:
   m_GameObject: {fileID: 1597529292444219897}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0.7799196, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -508,7 +506,7 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1597529292444219897}
   m_Enabled: 1
---- !u!114 &2076027811668825883
+--- !u!114 &6497139409712952038
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -523,10 +521,10 @@ MonoBehaviour:
   volumeTrigger: {fileID: 7741103317775123907}
   volumeLayer:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 4294967295
   stopNaNPropagation: 1
   finalBlitToCameraTarget: 0
-  antialiasingMode: 1
+  antialiasingMode: 0
   temporalAntialiasing:
     jitterSpread: 0.75
     sharpness: 0.25
@@ -535,8 +533,8 @@ MonoBehaviour:
   subpixelMorphologicalAntialiasing:
     quality: 2
   fastApproximateAntialiasing:
-    fastMode: 1
-    keepAlpha: 1
+    fastMode: 0
+    keepAlpha: 0
   fog:
     enabled: 1
     excludeSkybox: 1
@@ -566,48 +564,10 @@ MonoBehaviour:
   m_ShowCustomSorter: 0
   breakBeforeColorGrading: 0
   m_BeforeTransparentBundles: []
-  m_BeforeStackBundles: []
+  m_BeforeStackBundles:
+  - assemblyQualifiedName: ToxicGas, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
   m_AfterStackBundles: []
---- !u!114 &2517280182534493461
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1597529292444219897}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sharedProfile: {fileID: 11400000, guid: 5582e26fdca0d864583af742f4930b73, type: 2}
-  isGlobal: 1
-  blendDistance: 0
-  weight: 1
-  priority: 0
---- !u!114 &5256841565269403975
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1597529292444219897}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0ed5a06d242bcd43bf0410bdcbef934, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wearingMask: 0
-  fadeSpeed: 3
-  gasShader: {fileID: 4800000, guid: e75cf747d5fc67546a5c763267ad91c0, type: 3}
-  maxGasDensity: 1.5
-  depthFalloff: 8
-  gasColor: {r: 0.2, g: 0.6, b: 0.1, a: 1}
-  maxVignetteStrength: 0.85
-  vignetteColor: {r: 0, g: 0, b: 0, a: 1}
-  speed: 0.5
-  cloudScale: 5
-  distortionStrength: 0.02
 --- !u!1 &1632144969701283365
 GameObject:
   m_ObjectHideFlags: 0
@@ -731,15 +691,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b301be8e61e1b6499a8dfdfee37ef9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gasEffect: {fileID: 5256841565269403975}
   healthBar: {fileID: 2237837744576089719}
+  wearingMask: 0
   oxygenBar: {fileID: 4964018641281546217}
   cameraObject: {fileID: 2596479797084471209}
   handAnim: {fileID: 6618116224420845324}
   walkSpeed: 2
-  runSpeed: 4
+  runSpeed: 8
   onGround: 0
   spinningCrank: 0
+  insideFog: 0
   CurrentMaskState: 0
   EventMaskStateChanged:
     m_PersistentCalls:
@@ -872,7 +833,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 80f94cb1d4b99d047a6de185ca4d59a3, type: 3}
     m_FontSize: 14
     m_FontStyle: 3
     m_BestFit: 0
@@ -2276,7 +2237,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 2.88}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &366725214550419135
@@ -2308,8 +2269,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 26
+    m_Font: {fileID: 12800000, guid: 80f94cb1d4b99d047a6de185ca4d59a3, type: 3}
+    m_FontSize: 38
     m_FontStyle: 3
     m_BestFit: 0
     m_MinSize: 10
@@ -2743,15 +2704,15 @@ PrefabInstance:
     - target: {fileID: -1461304994638716399, guid: 1a355129543202a4ca832fb57b7a43aa, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: b42c59fcb3717b24aa8db5d97a38fafa, type: 2}
+      objectReference: {fileID: 2100000, guid: e83b1138a15ee6044b81329282ef49c6, type: 2}
     - target: {fileID: -804731622281664130, guid: 1a355129543202a4ca832fb57b7a43aa, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: b42c59fcb3717b24aa8db5d97a38fafa, type: 2}
+      objectReference: {fileID: 2100000, guid: e83b1138a15ee6044b81329282ef49c6, type: 2}
     - target: {fileID: -678588488315902003, guid: 1a355129543202a4ca832fb57b7a43aa, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: b42c59fcb3717b24aa8db5d97a38fafa, type: 2}
+      objectReference: {fileID: 2100000, guid: e83b1138a15ee6044b81329282ef49c6, type: 2}
     - target: {fileID: 919132149155446097, guid: 1a355129543202a4ca832fb57b7a43aa, type: 3}
       propertyPath: m_Name
       value: Pistol
@@ -2829,7 +2790,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 8db40da17bf72a44b9f54b57a593fad2, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 0f773531f027ea446958924da6ca65c7, type: 2}
+      objectReference: {fileID: 2100000, guid: fab9a1796c24b324d963227605478395, type: 2}
     - target: {fileID: 919132149155446097, guid: 8db40da17bf72a44b9f54b57a593fad2, type: 3}
       propertyPath: m_Name
       value: Mask
@@ -2911,7 +2872,7 @@ PrefabInstance:
     - target: {fileID: 8417361359673230750, guid: e1cae78273003f5409e1a4fc29ecb5e2, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: b315cc3d5d05c3142969415ce1451ef1, type: 2}
+      objectReference: {fileID: 2100000, guid: cfc1b1c994ca47149bc7eec3009d21ac, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:

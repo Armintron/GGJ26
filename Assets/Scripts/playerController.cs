@@ -7,9 +7,9 @@ using UnityEngine.SceneManagement;
 
 public class playerController : MonoBehaviour
 {
-    public ToxicGasSimple gasEffect;
 
     public GameObject healthBar;
+    public bool wearingMask;
     public GameObject oxygenBar;
     float health = 100;
     float oxygen = 100;
@@ -24,6 +24,8 @@ public class playerController : MonoBehaviour
     public bool onGround = false;
 
     public bool spinningCrank = false;
+
+    public bool insideFog = false;
 
     public MaskState CurrentMaskState = MaskState.Off;
 
@@ -68,24 +70,26 @@ public class playerController : MonoBehaviour
         oxygenBar.transform.localScale = new Vector3(oxygen / 100, 1, 1);
 
 
-        float speedMultiplier = walkSpeed;
+        float speedMultiplier = 3;
         AnimatorStateInfo handInfo = handAnim.GetCurrentAnimatorStateInfo(0);
 
         if (Input.GetMouseButton(1) && oxygen > 0 && spinningCrank == false)
         {
-            gasEffect.wearingMask = true;
-            oxygen -= Time.deltaTime * 6;
-            speedMultiplier = runSpeed;
+            if (insideFog)
+                oxygen -= Time.deltaTime * 6;
+            speedMultiplier = 4;
             if (!handInfo.IsName("HoldMask") && !handInfo.IsName("EnterMask"))
             {
                 handAnim.Play("EnterMask");
+                wearingMask = true;
                 SetMaskState(MaskState.On);
             }
         }
         else
         {
-            gasEffect.wearingMask = false;
-            health -= Time.deltaTime * 3;
+            wearingMask = false;
+            if (insideFog)
+                health -= Time.deltaTime * 3;
             if (spinningCrank == false)
             {
                 if (handInfo.IsName("HoldMask") || handInfo.IsName("EnterMask") || handInfo.IsName("RemoveMask"))
