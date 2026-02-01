@@ -425,6 +425,7 @@ GameObject:
   - component: {fileID: 6590973405936257282}
   - component: {fileID: 7848303170679533029}
   - component: {fileID: 6497139409712952038}
+  - component: {fileID: 5631010351574498178}
   m_Layer: 0
   m_Name: RealCameraSorry
   m_TagString: MainCamera
@@ -568,6 +569,18 @@ MonoBehaviour:
   - assemblyQualifiedName: ToxicGas, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   m_AfterStackBundles: []
+--- !u!114 &5631010351574498178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1597529292444219897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 662978e2055b0024c8bc65d75b3578f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1632144969701283365
 GameObject:
   m_ObjectHideFlags: 0

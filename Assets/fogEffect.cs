@@ -32,7 +32,7 @@ public class fogEffect : MonoBehaviour
     {
         if (foundPlayer == null)
         {
-            foundPlayer = FindObjectOfType<playerController>();
+            foundPlayer = FindObjectOfType<playerController>(); 
         }
         if (foundPlayer.wearingMask == true)
         {
