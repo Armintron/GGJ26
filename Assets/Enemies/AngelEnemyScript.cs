@@ -4,10 +4,8 @@ using GGJ;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BaseEnemyScript : MonoBehaviour
+public class AngelEnemyScript : MonoBehaviour
 {
-    [SerializeField]
-    public float MoveSpeed = 5;
     [SerializeField]
     public EnemyState CurrentEnemyState;
     [SerializeField]
@@ -22,32 +20,22 @@ public class BaseEnemyScript : MonoBehaviour
     public float AttackDamage = 10f;
     public ParticleSystem ParticleSystemRef;
 
+    public float LookAngleThreshold = 20f;
+
     void Start()
     {
         if (!PlayerRef)
         {
             PlayerRef = GameObject.FindGameObjectWithTag("Player");
         }
-
-        playerController controller = PlayerRef?.GetComponent<playerController>();
-        if (controller)
-        {
-            controller.EventMaskStateChanged.AddListener((MaskState state) =>
-            {
-                SetEnemyState(MaskToEnemyState(state));
-            });
-
-            SetEnemyState(MaskToEnemyState(controller.CurrentMaskState));
-        }
-    }
-
-    private EnemyState MaskToEnemyState(MaskState state)
-    {
-        return state == MaskState.On ? EnemyState.Active : EnemyState.NotActive;
     }
 
     void Update()
     {
+        Vector3 dirFromPlayer = (transform.position - PlayerRef.transform.position).normalized;
+        bool playerLookingAtThis = Vector3.Angle(dirFromPlayer, PlayerRef.transform.forward) <= LookAngleThreshold;
+        SetEnemyState(playerLookingAtThis ? EnemyState.NotActive : EnemyState.Active);
+
         switch (CurrentEnemyState)
         {
             case EnemyState.NotActive:

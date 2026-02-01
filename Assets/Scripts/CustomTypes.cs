@@ -20,9 +20,4 @@ namespace GGJ
         Off,
         On
     }
-
-    public enum Layers
-    {
-        Player,
-    };
 }
