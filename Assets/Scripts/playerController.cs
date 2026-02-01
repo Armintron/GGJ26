@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class playerController : MonoBehaviour
 {
+    public ToxicGasSimple gasEffect;
+
     public GameObject healthBar;
     public GameObject oxygenBar;
     float health = 100;
@@ -21,12 +23,19 @@ public class playerController : MonoBehaviour
 
     public bool onGround = false;
 
+    public bool spinningCrank = false;
+
     public MaskState CurrentMaskState = MaskState.Off;
 
     [SerializeField]
     public UnityEvent<MaskState> EventMaskStateChanged;
 
     private bool bIsInteracting = false;
+
+    public Animator playerCrankAnimator;
+    public GameObject playerObject;
+    public GameObject playerCrank;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -58,11 +67,13 @@ public class playerController : MonoBehaviour
         healthBar.transform.localScale = new Vector3(health/100, 1, 1);
         oxygenBar.transform.localScale = new Vector3(oxygen / 100, 1, 1);
 
+
         float speedMultiplier = walkSpeed;
         AnimatorStateInfo handInfo = handAnim.GetCurrentAnimatorStateInfo(0);
 
-        if (Input.GetMouseButton(1) && oxygen > 0)
+        if (Input.GetMouseButton(1) && oxygen > 0 && spinningCrank == false)
         {
+            gasEffect.wearingMask = true;
             oxygen -= Time.deltaTime * 6;
             speedMultiplier = runSpeed;
             if (!handInfo.IsName("HoldMask") && !handInfo.IsName("EnterMask"))
@@ -73,15 +84,36 @@ public class playerController : MonoBehaviour
         }
         else
         {
+            gasEffect.wearingMask = false;
             health -= Time.deltaTime * 3;
-            if (handInfo.IsName("HoldMask") || handInfo.IsName("EnterMask") || handInfo.IsName("RemoveMask"))
+            if (spinningCrank == false)
             {
-                handAnim.Play("RemoveMask");
-                SetMaskState(MaskState.Off);
-            }
-            else
-            {
-                handAnim.Play("Idle");
+                if (handInfo.IsName("HoldMask") || handInfo.IsName("EnterMask") || handInfo.IsName("RemoveMask"))
+                {
+                    handAnim.Play("RemoveMask");
+                    SetMaskState(MaskState.Off);
+                }
+                else if (!handInfo.IsName("FirePistol"))
+                {
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        handAnim.Play("FirePistol");
+                        RaycastHit hit;
+                        if (Physics.Raycast(Camera.main.transform.position + Camera.main.transform.forward, Camera.main.transform.forward, out hit))
+                        {
+                            Debug.Log("CALLED RAYCAST AND HIT " + hit.transform.gameObject.name);
+                            if (hit.transform.gameObject.GetComponent<BaseEnemyScript>())
+                            {
+                                Debug.Log("HIT ENEMY");
+                                hit.transform.gameObject.GetComponent<BaseEnemyScript>().Damage(30);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        handAnim.Play("Idle");
+                    }
+                }
             }
         }
         if (health < 0)
@@ -90,14 +122,21 @@ public class playerController : MonoBehaviour
         }
         
         Vector3 vel = (transform.forward * Input.GetAxis("Vertical") + transform.right * Input.GetAxis("Horizontal")) * speedMultiplier;
-
-        if (!bIsInteracting)
+        if (spinningCrank == false)
         {
-            vel.y = rb.velocity.y;
-            rb.velocity = vel;
-            transform.Rotate(0, Input.GetAxis("Mouse X"), 0);
-            cameraObject.transform.Rotate(-Input.GetAxis("Mouse Y"), 0, 0);
+            if (!bIsInteracting)
+            {
+                vel.y = rb.velocity.y;
+                rb.velocity = vel;
+                transform.Rotate(0, Input.GetAxis("Mouse X"), 0);
+                cameraObject.transform.Rotate(-Input.GetAxis("Mouse Y"), 0, 0);
+            }
         }
+        else
+        {
+            GetComponent<Rigidbody>().velocity = new Vector3();
+        }
+
 
         onGround = Physics.Raycast(transform.position, Vector3.down, 1.1f);
         if (onGround)
