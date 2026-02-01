@@ -58,13 +58,13 @@ public class playerController : MonoBehaviour
         healthBar.transform.localScale = new Vector3(health/100, 1, 1);
         oxygenBar.transform.localScale = new Vector3(oxygen / 100, 1, 1);
 
-        float speedMultiplier = 5;
+        float speedMultiplier = walkSpeed;
         AnimatorStateInfo handInfo = handAnim.GetCurrentAnimatorStateInfo(0);
 
         if (Input.GetMouseButton(1) && oxygen > 0)
         {
             oxygen -= Time.deltaTime * 6;
-            speedMultiplier = 10;
+            speedMultiplier = runSpeed;
             if (!handInfo.IsName("HoldMask") && !handInfo.IsName("EnterMask"))
             {
                 handAnim.Play("EnterMask");

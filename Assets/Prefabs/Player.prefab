@@ -204,8 +204,8 @@ MonoBehaviour:
   oxygenBar: {fileID: 4964018641281546217}
   cameraObject: {fileID: 2596479797084471209}
   handAnim: {fileID: 6618116224420845324}
-  walkSpeed: 5
-  runSpeed: 10
+  walkSpeed: 2
+  runSpeed: 2.5
   onGround: 0
   CurrentMaskState: 0
   EventMaskStateChanged:
