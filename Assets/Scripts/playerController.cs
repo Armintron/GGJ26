@@ -41,6 +41,8 @@ public class playerController : MonoBehaviour
     [Header("Audio")]
     public AudioClip footstepSound;
     private AudioSource footstepSource;
+    public AudioClip maskSound;
+    private AudioSource maskSource;
 
     void Start()
     {
@@ -54,6 +56,12 @@ public class playerController : MonoBehaviour
         footstepSource.clip = footstepSound;
         footstepSource.loop = true;
         footstepSource.playOnAwake = false;
+
+        // Initialize mask audio source
+        maskSource = gameObject.AddComponent<AudioSource>();
+        maskSource.clip = maskSound;
+        maskSource.loop = false;
+        maskSource.playOnAwake = false;
     }
 
     public void SetMaskState(MaskState state)
@@ -91,6 +99,10 @@ public class playerController : MonoBehaviour
             {
                 handAnim.Play("EnterMask");
                 wearingMask = true;
+                if (maskSound != null)
+                {
+                    maskSource.PlayOneShot(maskSound);
+                }
                 SetMaskState(MaskState.On);
             }
         }
@@ -170,6 +182,13 @@ public class playerController : MonoBehaviour
         }
 
         if (onGround)
+        {
+            if (Input.GetKey(KeyCode.Space) && Input.GetMouseButton(1))
+            {
+                vel.y = 5;
+                rb.velocity = vel;
+            }
+        }
         {
             if (Input.GetKey(KeyCode.Space) && Input.GetMouseButton(1))
             {
