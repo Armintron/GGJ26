@@ -6,6 +6,8 @@ public class crankInteractable : MonoBehaviour
 {
     public GameObject crankObject;
 
+    public GameObject enableAfter;
+
     public GameObject crankEnd;
     public GameObject crankMatchEnd;
 
@@ -117,6 +119,11 @@ public class crankInteractable : MonoBehaviour
             Destroy(this);
             Destroy(crankObject);
             playerObject.GetComponent<playerController>().spinningCrank = false;
+
+            if (enableAfter != null)
+            {
+                enableAfter.SetActive(true);
+            }
         }
 
     }

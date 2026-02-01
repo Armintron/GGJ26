@@ -75,7 +75,7 @@ public class playerController : MonoBehaviour
         if (Input.GetMouseButton(1) && oxygen > 0 && spinningCrank == false)
         {
             if (insideFog)
-                oxygen -= Time.deltaTime * 6;
+                oxygen -= Time.deltaTime * 4;
             speedMultiplier = 4;
             if (!handInfo.IsName("HoldMask") && !handInfo.IsName("EnterMask"))
             {
