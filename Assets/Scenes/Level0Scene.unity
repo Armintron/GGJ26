@@ -50960,10 +50960,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: DieFloor
       objectReference: {fileID: 0}
-    - target: {fileID: 9192560072829846151, guid: 2227dfc602670924fbfe5ea4f195ea2f, type: 3}
-      propertyPath: sceneLoad
-      value: Level0Scene
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
