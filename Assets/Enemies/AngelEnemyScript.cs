@@ -22,12 +22,25 @@ public class AngelEnemyScript : MonoBehaviour
 
     public float LookAngleThreshold = 20f;
 
+    [Header("Audio")]
+    public AudioClip crySound;
+    private AudioSource audioSource;
+
     void Start()
     {
         if (!PlayerRef)
         {
             PlayerRef = GameObject.FindGameObjectWithTag("Player");
         }
+
+        // Initialize audio source
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.clip = crySound;
+        audioSource.loop = true;
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 1f; // Set to 3D spatial audio
+        audioSource.minDistance = 1f;
+        audioSource.maxDistance = 20f;
     }
 
     void Update()
@@ -35,6 +48,22 @@ public class AngelEnemyScript : MonoBehaviour
         Vector3 dirFromPlayer = (transform.position - PlayerRef.transform.position).normalized;
         bool playerLookingAtThis = Vector3.Angle(dirFromPlayer, PlayerRef.transform.forward) <= LookAngleThreshold;
         SetEnemyState(playerLookingAtThis ? EnemyState.NotActive : EnemyState.Active);
+
+        // Cry logic: play sound if player is looking at the angel
+        if (playerLookingAtThis && crySound != null)
+        {
+            if (!audioSource.isPlaying)
+            {
+                audioSource.Play();
+            }
+        }
+        else
+        {
+            if (audioSource.isPlaying)
+            {
+                audioSource.Stop();
+            }
+        }
 
         switch (CurrentEnemyState)
         {

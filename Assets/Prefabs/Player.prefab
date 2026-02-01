@@ -721,6 +721,9 @@ MonoBehaviour:
   playerCrankAnimator: {fileID: 6618116224420845324}
   playerObject: {fileID: 1632144969701283365}
   playerCrank: {fileID: 3802670084355390280}
+  footstepSound: {fileID: 8300000, guid: 9e5f6cbde20734285895ea4b88d3cb66, type: 3}
+  maskSound: {fileID: 8300000, guid: 8bf1759f994f44558863913efe4dea17, type: 3}
+  gunSound: {fileID: 8300000, guid: 48ea09314a4914eb99dc5b496e945664, type: 3}
 --- !u!54 &685618212070499946
 Rigidbody:
   m_ObjectHideFlags: 0

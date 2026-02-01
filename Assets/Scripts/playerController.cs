@@ -43,6 +43,8 @@ public class playerController : MonoBehaviour
     private AudioSource footstepSource;
     public AudioClip maskSound;
     private AudioSource maskSource;
+    public AudioClip gunSound;
+    private AudioSource gunSource;
 
     void Start()
     {
@@ -62,6 +64,11 @@ public class playerController : MonoBehaviour
         maskSource.clip = maskSound;
         maskSource.loop = false;
         maskSource.playOnAwake = false;
+
+        // Initialize gun audio source
+        gunSource = gameObject.AddComponent<AudioSource>();
+        gunSource.playOnAwake = false;
+        gunSource.spatialBlend = 0f; // 2D sound for player weapon
     }
 
     public void SetMaskState(MaskState state)
@@ -123,6 +130,10 @@ public class playerController : MonoBehaviour
                     if (Input.GetMouseButtonDown(0))
                     {
                         handAnim.Play("FirePistol");
+                        if (gunSound != null)
+                        {
+                            gunSource.PlayOneShot(gunSound);
+                        }
                         RaycastHit hit;
                         if (Physics.Raycast(Camera.main.transform.position + Camera.main.transform.forward, Camera.main.transform.forward, out hit))
                         {

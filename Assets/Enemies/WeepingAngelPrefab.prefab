@@ -112,6 +112,7 @@ MonoBehaviour:
   AttackDamage: 10
   ParticleSystemRef: {fileID: 0}
   LookAngleThreshold: 45
+  crySound: {fileID: 8300000, guid: 88baa4b14ce9b48ef832040f27580467, type: 3}
 --- !u!1001 &2197370927239462370
 PrefabInstance:
   m_ObjectHideFlags: 0

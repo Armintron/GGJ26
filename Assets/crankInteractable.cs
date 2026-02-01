@@ -56,6 +56,9 @@ public class crankInteractable : MonoBehaviour
         // Initialize audio source
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 1f; // Set to 3D spatial audio
+        audioSource.minDistance = 1f;
+        audioSource.maxDistance = 15f;
     }
 
     private void OnTriggerStay(Collider other)

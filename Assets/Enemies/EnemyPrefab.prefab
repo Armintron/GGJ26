@@ -5660,6 +5660,7 @@ MonoBehaviour:
   AttackDamage: 10
   ParticleSystemRef: {fileID: 5617295319079721376}
   enemyMeshAnimator: {fileID: 5031694577952531325}
+  ambientSound: {fileID: 8300000, guid: b529e804f4056460cb877e54878fabdd, type: 3}
 --- !u!195 &4059146471236835819
 NavMeshAgent:
   m_ObjectHideFlags: 0

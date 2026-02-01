@@ -23,6 +23,11 @@ public class BaseEnemyScript : MonoBehaviour
     public float AttackDamage = 10f;
     public ParticleSystem ParticleSystemRef;
     public Animator enemyMeshAnimator;
+
+    [Header("Audio")]
+    public AudioClip ambientSound;
+    private AudioSource audioSource;
+
     public void Damage(float inputHealth)
     {
         AnimatorStateInfo enemyInfo = enemyMeshAnimator.GetCurrentAnimatorStateInfo(0);
@@ -43,12 +48,22 @@ public class BaseEnemyScript : MonoBehaviour
 
         playerController controller = PlayerRef?.GetComponent<playerController>();
 
+        // Initialize spatial audio source
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.clip = ambientSound;
+        audioSource.loop = true;
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 1f; // Set to 3D spatial audio
+        audioSource.minDistance = 1f;
+        audioSource.maxDistance = 20f;
     }
 
     void Update()
     {
         if (health < 0)
         {
+            if (audioSource.isPlaying)
+                audioSource.Stop();
             enemyMeshAnimator.Play("Die");
             Destroy(this);
             Destroy(GetComponent<CapsuleCollider>());
@@ -65,11 +80,17 @@ public class BaseEnemyScript : MonoBehaviour
                 NavMeshAgentRef.isStopped = true;
                 if (!enemyInfo.IsName("MonsterSleep"))
                     enemyMeshAnimator.Play("MonsterSleep");
+                
+                if (audioSource.isPlaying)
+                    audioSource.Stop();
 
                 break;
             case EnemyState.Active:
                 if (enemyInfo.IsName("MonsterSleep"))
                     enemyMeshAnimator.Play("MonsterWakeUp");
+
+                if (ambientSound != null && !audioSource.isPlaying)
+                    audioSource.Play();
 
                 if ((LastAttack + AttackRate) <= Time.time)
                 {
