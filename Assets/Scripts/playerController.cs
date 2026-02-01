@@ -38,12 +38,30 @@ public class playerController : MonoBehaviour
     public GameObject playerObject;
     public GameObject playerCrank;
 
+    [Header("Audio")]
+    public AudioClip footstepSound;
+    private AudioSource footstepSource;
+    public AudioClip maskSound;
+    private AudioSource maskSource;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         SetMaskState(MaskState.Off);
+
+        // Initialize footstep audio source
+        footstepSource = gameObject.AddComponent<AudioSource>();
+        footstepSource.clip = footstepSound;
+        footstepSource.loop = true;
+        footstepSource.playOnAwake = false;
+
+        // Initialize mask audio source
+        maskSource = gameObject.AddComponent<AudioSource>();
+        maskSource.clip = maskSound;
+        maskSource.loop = false;
+        maskSource.playOnAwake = false;
     }
 
     public void SetMaskState(MaskState state)
@@ -75,12 +93,16 @@ public class playerController : MonoBehaviour
         if (Input.GetMouseButton(1) && oxygen > 0 && spinningCrank == false)
         {
             if (insideFog)
-                oxygen -= Time.deltaTime * 6;
+                oxygen -= Time.deltaTime * 4;
             speedMultiplier = 4;
             if (!handInfo.IsName("HoldMask") && !handInfo.IsName("EnterMask"))
             {
                 handAnim.Play("EnterMask");
                 wearingMask = true;
+                if (maskSound != null)
+                {
+                    maskSource.PlayOneShot(maskSound);
+                }
                 SetMaskState(MaskState.On);
             }
         }
@@ -142,7 +164,31 @@ public class playerController : MonoBehaviour
 
 
         onGround = Physics.Raycast(transform.position, Vector3.down, 1.1f);
+        
+        // Footstep audio logic
+        if (onGround && !spinningCrank && !bIsInteracting && (Mathf.Abs(Input.GetAxis("Vertical")) > 0.1f || Mathf.Abs(Input.GetAxis("Horizontal")) > 0.1f))
+        {
+            if (!footstepSource.isPlaying && footstepSound != null)
+            {
+                footstepSource.Play();
+            }
+        }
+        else
+        {
+            if (footstepSource.isPlaying)
+            {
+                footstepSource.Pause();
+            }
+        }
+
         if (onGround)
+        {
+            if (Input.GetKey(KeyCode.Space) && Input.GetMouseButton(1))
+            {
+                vel.y = 5;
+                rb.velocity = vel;
+            }
+        }
         {
             if (Input.GetKey(KeyCode.Space) && Input.GetMouseButton(1))
             {

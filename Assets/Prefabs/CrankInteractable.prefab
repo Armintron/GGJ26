@@ -150,6 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   crankObject: {fileID: 2530485844105043467}
+  enableAfter: {fileID: 0}
   crankEnd: {fileID: 1092935847958047902}
   crankMatchEnd: {fileID: 3523429976079058015}
   crankForwardOffsetDirection: {x: 0, y: 0}
@@ -158,6 +159,10 @@ MonoBehaviour:
   playbackTime: 0
   interactPrompt: {fileID: 429486980672373599}
   turnPrompt: {fileID: 610881958650048389}
+  crankSound: {fileID: 8300000, guid: e21a0389867e44d339e1f5ff3fc08be7, type: 3}
+  crankSoundInterval: 0.2
+  doorSound: {fileID: 8300000, guid: fdb65fd23f11046b6a97bc032e6d07e8, type: 3}
+  doorSoundInterval: 0.5
 --- !u!1 &610881958650048389
 GameObject:
   m_ObjectHideFlags: 0
