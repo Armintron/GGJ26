@@ -19,6 +19,7 @@ public class BaseEnemyScript : MonoBehaviour
     public float AttackDist = 5f;
     public float AttackRate = 2f;
     public float LastAttack = 0f;
+    public float AttackDamage = 10f;
     public ParticleSystem ParticleSystemRef;
 
     void Start()
@@ -72,28 +73,13 @@ public class BaseEnemyScript : MonoBehaviour
     
     public void Attack()
     {
-        // Debug Draw
-        {
-            // Top
-            Debug.DrawRay(AttackStart.position + new Vector3(0, AttackRadius / 2, 0), transform.forward * AttackDist, Color.red, 1f);
-            // Bottom
-            Debug.DrawRay(AttackStart.position - new Vector3(0, AttackRadius / 2, 0), transform.forward * AttackDist, Color.red, 1f);
-            // Right
-            Debug.DrawRay(AttackStart.position + new Vector3(AttackRadius / 2, 0, 0), transform.forward * AttackDist, Color.red, 1f);
-            // Left
-            Debug.DrawRay(AttackStart.position - new Vector3(AttackRadius / 2, 0, 0), transform.forward * AttackDist, Color.red, 1f);
-        }
-        
         ParticleSystemRef.Play();
 
         RaycastHit hit;
-        if (Physics.SphereCast(AttackStart.position, AttackRadius, transform.forward, out hit, AttackDist))
+        if (Physics.Raycast(AttackStart.position, transform.forward, out hit, AttackDist) && hit.collider.gameObject.CompareTag("Player"))
         {
-            if (hit.collider.gameObject.CompareTag("Player"))
-            {
-                Debug.Log("Doing Damage");
-                PlayerStats.Instance.currentHealth -= 10;
-            }
+            Debug.Log("Doing Damage");
+            PlayerStats.Instance.currentHealth -= AttackDamage;
         }
     }
     
