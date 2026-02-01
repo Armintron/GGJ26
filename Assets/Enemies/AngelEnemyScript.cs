@@ -4,11 +4,8 @@ using GGJ;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BaseEnemyScript : MonoBehaviour
+public class AngelEnemyScript : MonoBehaviour
 {
-    float health = 100;
-    [SerializeField]
-    public float MoveSpeed = 5;
     [SerializeField]
     public EnemyState CurrentEnemyState;
     [SerializeField]
@@ -22,55 +19,29 @@ public class BaseEnemyScript : MonoBehaviour
     public float LastAttack = 0f;
     public float AttackDamage = 10f;
     public ParticleSystem ParticleSystemRef;
-    public Animator enemyMeshAnimator;
-    public void Damage(float inputHealth)
-    {
-        AnimatorStateInfo enemyInfo = enemyMeshAnimator.GetCurrentAnimatorStateInfo(0);
-        if (enemyInfo.IsName("MonsterWalk"))
-        {
-            health -= inputHealth;
-            enemyMeshAnimator.Play("TakeDamage");
-        }
-    }
+
+    public float LookAngleThreshold = 20f;
 
     void Start()
     {
-        health = 100;
         if (!PlayerRef)
         {
             PlayerRef = GameObject.FindGameObjectWithTag("Player");
         }
-
-        playerController controller = PlayerRef?.GetComponent<playerController>();
-
     }
 
     void Update()
     {
-        if (health < 0)
-        {
-            enemyMeshAnimator.Play("Die");
-            Destroy(this);
-            Destroy(GetComponent<CapsuleCollider>());
-            Destroy(NavMeshAgentRef);
-        }
-        if (IsGoalReachable(PlayerRef.transform.position) && Input.GetMouseButtonDown(1))
-        {
-            CurrentEnemyState = EnemyState.Active;
-        }
-        AnimatorStateInfo enemyInfo = enemyMeshAnimator.GetCurrentAnimatorStateInfo(0);
+        Vector3 dirFromPlayer = (transform.position - PlayerRef.transform.position).normalized;
+        bool playerLookingAtThis = Vector3.Angle(dirFromPlayer, PlayerRef.transform.forward) <= LookAngleThreshold;
+        SetEnemyState(playerLookingAtThis ? EnemyState.NotActive : EnemyState.Active);
+
         switch (CurrentEnemyState)
         {
             case EnemyState.NotActive:
                 NavMeshAgentRef.isStopped = true;
-                if (!enemyInfo.IsName("MonsterSleep"))
-                    enemyMeshAnimator.Play("MonsterSleep");
-
                 break;
             case EnemyState.Active:
-                if (enemyInfo.IsName("MonsterSleep"))
-                    enemyMeshAnimator.Play("MonsterWakeUp");
-
                 if ((LastAttack + AttackRate) <= Time.time)
                 {
                     Attack();
@@ -83,29 +54,11 @@ public class BaseEnemyScript : MonoBehaviour
                 {
                     NavMeshAgentRef.destination = destination;
                 }
+                transform.LookAt(NavMeshAgentRef.destination);
                 break;
         }
     }
-
-    bool IsGoalReachable(Vector3 targetPosition)
-    {
-        NavMeshPath path = new NavMeshPath();
-        // Calculate the path. NavMesh.CalculatePath is synchronous.
-        NavMesh.CalculatePath(transform.position, targetPosition, NavMesh.AllAreas, path);
-
-        // Check the path status
-        if (path.status == NavMeshPathStatus.PathComplete)
-        {
-            return true;
-        }
-        else
-        {
-            // The path is incomplete, meaning the destination is unreachable.
-            // Other statuses can be PathPartial or PathInvalid.
-            return false;
-        }
-    }
-
+    
     public void Attack()
     {
         if (ParticleSystemRef)

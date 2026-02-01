@@ -1,0 +1,8 @@
+newmtl WingMat
+Kd 1 1 1
+d 1
+
+newmtl EnemyMat
+Kd 1 0 0
+d 0
+
