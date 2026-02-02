@@ -99,6 +99,10 @@ public class playerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
         healthBar.transform.localScale = new Vector3(health/100, 1, 1);
         oxygenBar.transform.localScale = new Vector3(oxygen / 100, 1, 1);
 

@@ -4,6 +4,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class menuLoading : MonoBehaviour
 {
+    private void Start()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
     public void startGame()
     {
         SceneManager.LoadScene("Level0Scene");
@@ -12,5 +17,10 @@ public class menuLoading : MonoBehaviour
     public void stopGame()
     {
         Application.Quit();
+    }
+
+    public void menu()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 }
