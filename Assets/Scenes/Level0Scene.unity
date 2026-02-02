@@ -51061,6 +51061,14 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 4733129000093367020, guid: f77c4832bf73380428d69db64f630a3d, type: 3}
+      propertyPath: gasSound
+      value: 
+      objectReference: {fileID: 8300000, guid: ff708e14d4d764fa3bffb09a8bf90628, type: 3}
+    - target: {fileID: 4733129000093367020, guid: f77c4832bf73380428d69db64f630a3d, type: 3}
+      propertyPath: maskSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 8bf1759f994f44558863913efe4dea17, type: 3}
+    - target: {fileID: 4733129000093367020, guid: f77c4832bf73380428d69db64f630a3d, type: 3}
       propertyPath: footstepSound
       value: 
       objectReference: {fileID: 8300000, guid: 9e5f6cbde20734285895ea4b88d3cb66, type: 3}

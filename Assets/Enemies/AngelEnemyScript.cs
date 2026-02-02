@@ -6,6 +6,7 @@ using UnityEngine.AI;
 
 public class AngelEnemyScript : MonoBehaviour
 {
+    float health = 100;
     [SerializeField]
     public EnemyState CurrentEnemyState;
     [SerializeField]
@@ -26,6 +27,11 @@ public class AngelEnemyScript : MonoBehaviour
     public AudioClip crySound;
     private AudioSource audioSource;
 
+    public void Damage(float inputHealth)
+    {
+        health -= inputHealth;
+    }
+
     void Start()
     {
         if (!PlayerRef)
@@ -45,6 +51,17 @@ public class AngelEnemyScript : MonoBehaviour
 
     void Update()
     {
+        if (health < 0)
+        {
+            if (audioSource.isPlaying)
+                audioSource.Stop();
+            
+            Destroy(this);
+            Destroy(GetComponent<CapsuleCollider>());
+            Destroy(NavMeshAgentRef);
+            return;
+        }
+
         Vector3 dirFromPlayer = (transform.position - PlayerRef.transform.position).normalized;
         bool playerLookingAtThis = Vector3.Angle(dirFromPlayer, PlayerRef.transform.forward) <= LookAngleThreshold;
         SetEnemyState(playerLookingAtThis ? EnemyState.NotActive : EnemyState.Active);

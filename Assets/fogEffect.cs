@@ -22,7 +22,7 @@ public class fogEffect : MonoBehaviour
     {
         if (other.gameObject.GetComponent<playerController>())
         {
-            other.gameObject.GetComponent<playerController>().insideFog = true;
+            other.gameObject.GetComponent<playerController>().insideFog = false;
             volume.enabled = false;
             volumeLayer2.enabled = false;
         }

@@ -68,6 +68,7 @@ public class crankInteractable : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             crankActivated = true;
+            other.gameObject.GetComponent<playerController>().spinningCrank = true;
         }
     }
 

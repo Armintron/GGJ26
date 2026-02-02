@@ -45,6 +45,10 @@ public class playerController : MonoBehaviour
     private AudioSource maskSource;
     public AudioClip gunSound;
     private AudioSource gunSource;
+    public AudioClip gasSound;
+    private AudioSource gasSource;
+
+    private bool prevInsideFog = false;
 
     void Start()
     {
@@ -69,6 +73,11 @@ public class playerController : MonoBehaviour
         gunSource = gameObject.AddComponent<AudioSource>();
         gunSource.playOnAwake = false;
         gunSource.spatialBlend = 0f; // 2D sound for player weapon
+
+        // Initialize gas audio source
+        gasSource = gameObject.AddComponent<AudioSource>();
+        gasSource.playOnAwake = false;
+        gasSource.spatialBlend = 0f; // 2D sound for global effect
     }
 
     public void SetMaskState(MaskState state)
@@ -93,6 +102,12 @@ public class playerController : MonoBehaviour
         healthBar.transform.localScale = new Vector3(health/100, 1, 1);
         oxygenBar.transform.localScale = new Vector3(oxygen / 100, 1, 1);
 
+        // Gas entry sound logic
+        if (insideFog && !prevInsideFog && gasSound != null)
+        {
+            gasSource.PlayOneShot(gasSound);
+        }
+        prevInsideFog = insideFog;
 
         float speedMultiplier = 3;
         AnimatorStateInfo handInfo = handAnim.GetCurrentAnimatorStateInfo(0);
@@ -129,19 +144,38 @@ public class playerController : MonoBehaviour
                 {
                     if (Input.GetMouseButtonDown(0))
                     {
-                        handAnim.Play("FirePistol");
-                        if (gunSound != null)
+                        // Check if looking at a crank before firing
+                        bool lookingAtCrank = false;
+                        RaycastHit interactHit;
+                        if (Physics.Raycast(cameraObject.transform.position, cameraObject.transform.forward, out interactHit, 3f))
                         {
-                            gunSource.PlayOneShot(gunSound);
-                        }
-                        RaycastHit hit;
-                        if (Physics.Raycast(Camera.main.transform.position + Camera.main.transform.forward, Camera.main.transform.forward, out hit))
-                        {
-                            Debug.Log("CALLED RAYCAST AND HIT " + hit.transform.gameObject.name);
-                            if (hit.transform.gameObject.GetComponent<BaseEnemyScript>())
+                            if (interactHit.collider.GetComponentInParent<crankInteractable>() || interactHit.collider.GetComponent<crankInteractable>())
                             {
-                                Debug.Log("HIT ENEMY");
-                                hit.transform.gameObject.GetComponent<BaseEnemyScript>().Damage(30);
+                                lookingAtCrank = true;
+                            }
+                        }
+
+                        if (!lookingAtCrank)
+                        {
+                            handAnim.Play("FirePistol");
+                            if (gunSound != null)
+                            {
+                                gunSource.PlayOneShot(gunSound);
+                            }
+                            RaycastHit hit;
+                            if (Physics.Raycast(Camera.main.transform.position + Camera.main.transform.forward, Camera.main.transform.forward, out hit))
+                            {
+                                Debug.Log("CALLED RAYCAST AND HIT " + hit.transform.gameObject.name);
+                                if (hit.transform.gameObject.GetComponent<BaseEnemyScript>())
+                                {
+                                    Debug.Log("HIT ENEMY");
+                                    hit.transform.gameObject.GetComponent<BaseEnemyScript>().Damage(30);
+                                }
+                                if (hit.transform.gameObject.GetComponent<AngelEnemyScript>())
+                                {
+                                    Debug.Log("HIT ANGEL");
+                                    hit.transform.gameObject.GetComponent<AngelEnemyScript>().Damage(30);
+                                }
                             }
                         }
                     }
@@ -183,6 +217,8 @@ public class playerController : MonoBehaviour
             {
                 footstepSource.Play();
             }
+            // Speed up footsteps based on movement speed (3 is base, 4 is mask speed)
+            footstepSource.pitch = speedMultiplier / 3f;
         }
         else
         {
@@ -193,13 +229,6 @@ public class playerController : MonoBehaviour
         }
 
         if (onGround)
-        {
-            if (Input.GetKey(KeyCode.Space) && Input.GetMouseButton(1))
-            {
-                vel.y = 5;
-                rb.velocity = vel;
-            }
-        }
         {
             if (Input.GetKey(KeyCode.Space) && Input.GetMouseButton(1))
             {
