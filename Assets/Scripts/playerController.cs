@@ -7,7 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class playerController : MonoBehaviour
 {
-
+    public AudioSource source;
+    public AudioClip clip;
     public GameObject healthBar;
     public bool wearingMask;
     public GameObject oxygenBar;

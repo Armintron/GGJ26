@@ -5717,6 +5717,7 @@ GameObject:
   - component: {fileID: 5937578853912620857}
   - component: {fileID: 4059146471236835819}
   - component: {fileID: 1405491183625096904}
+  - component: {fileID: 6883330056470094449}
   m_Layer: 0
   m_Name: EnemyPrefab
   m_TagString: Untagged
@@ -5812,6 +5813,18 @@ CapsuleCollider:
   m_Height: 3
   m_Direction: 1
   m_Center: {x: 0, y: 1.96, z: 0}
+--- !u!114 &6883330056470094449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7857250434790392749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e34ed396ef7339f429d3fced8f1ab2d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &8312756146874126793
 PrefabInstance:
   m_ObjectHideFlags: 0
