@@ -15882,6 +15882,10 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 4733129000093367020, guid: f77c4832bf73380428d69db64f630a3d, type: 3}
+      propertyPath: gasSound
+      value: 
+      objectReference: {fileID: 8300000, guid: ff708e14d4d764fa3bffb09a8bf90628, type: 3}
+    - target: {fileID: 4733129000093367020, guid: f77c4832bf73380428d69db64f630a3d, type: 3}
       propertyPath: runSpeed
       value: 5
       objectReference: {fileID: 0}
